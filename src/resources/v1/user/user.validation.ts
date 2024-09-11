@@ -1,7 +1,6 @@
 import { check, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
-import  ResponseHelper  from '../../../helpers/v1/response.helper';
-const responseHelper = new ResponseHelper();
+import  { badRequestRes }  from '../../../helpers/v1/response.helper';
 import { findUserByEmail } from './user.resource';
 
 export const validateCreateUser = async(req: Request, res: Response, next: NextFunction) => {
@@ -23,13 +22,13 @@ export const validateCreateUser = async(req: Request, res: Response, next: NextF
     // Validate and return error if any
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        responseHelper.badRequest('Validation failed', res, errors.array());
+        badRequestRes('Validation failed', res, errors.array());
     }
 
     // check if email already exists in the database
     const user = await findUserByEmail(req.body.email);
     if (user) {
-        responseHelper.badRequest('invalid data', res, {
+        badRequestRes('invalid data', res, {
             error: "Email already exists"
         });
     }
